@@ -1,0 +1,19 @@
+.grid{
+    width: 400px;
+    height: 600px;
+    background-color: blue;
+    position: relative;
+}
+.dood{
+    width: 50;
+    height: 80;
+    background-color: darkorange;
+    position: absolute;
+
+}
+.platform{
+    width: 85px;
+    height: 15px;
+    background-color: darkorchid;
+    position: absolute;
+}
