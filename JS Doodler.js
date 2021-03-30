@@ -4,6 +4,9 @@ document.addEventListener('DOMContentLoaded',()=>{
     let doodLeftSpace = 50
     let doodBottomSpace = 150
     let platFormMaker = 5
+    let platforms = []
+    let upTimerId
+    let downTimerId
     function createDood(){
         grid.appendChild(Dood)
         Dood.classList.add('dood')
@@ -19,6 +22,8 @@ document.addEventListener('DOMContentLoaded',()=>{
             const visual = this.visual
             visual.classList.add('Platfrom')
             visual.style.left = this.left + 'px'
+            visual.style.bottom =this.bottom + 'px'
+            grid.appendChild(visual)
         }
     }
     function createPlatform(){
@@ -26,16 +31,52 @@ document.addEventListener('DOMContentLoaded',()=>{
             let platFormSpacer = 600 / platFormMaker
             let platFormBottom = 100 + i * platFormSpacer
             let newPlatform = new Platform(platFormBottom)
+            platforms.push(newPlatform)
+
 
 
         }
 
     }
+    function movePlatforms(){
+        if(doodBottomSpace > 200){
+            platforms.forEach(platform => {
+                platform.bottom -=4
+                let visual = platform.visual
+                visual.style.bottom= platform.bottom + 'px'
+            })
+        }
+            
+    }
+    function jump(){
+        upTimerId =setInterval( function () {
+            doodBottomSpace +=20
+            Dood.style.bottom = doodBottomSpace + 'px'
+            if(doodBottomSpace > 350){
+                fall ()
+
+                
+            }
+
+        },30)
+
+    }
+     function fall(){ 
+         clearInterval(upTimerId)
+         downTimerId =setInterval(function(){
+             doodBottomSpace -= 5
+             Dood.style.bottom = doodBottomSpace +'px'
+
+         })
+
+     }
     
     function Start(){
         if(!GameOver)
             {createDood()
                 createPlatform()
+               setInterval (movePlatforms,30)
+               jump()
         }
     }
     //propbably should place a button to start the game
