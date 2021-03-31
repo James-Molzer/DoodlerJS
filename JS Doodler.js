@@ -9,6 +9,7 @@ document.addEventListener('DOMContentLoaded',()=>{
     let downTimerId
     function createDood(){
         grid.appendChild(Dood)
+        doodLeftSpace = platform[0].left
         Dood.classList.add('dood')
         Dood.style.left = doodLeftSpace +'px'
         Dood.style.bottom= doodBottomSpace +'px'
@@ -49,6 +50,7 @@ document.addEventListener('DOMContentLoaded',()=>{
             
     }
     function jump(){
+        clearInterval(downTimerId)
         upTimerId =setInterval( function () {
             doodBottomSpace +=20
             Dood.style.bottom = doodBottomSpace + 'px'
@@ -66,15 +68,26 @@ document.addEventListener('DOMContentLoaded',()=>{
          downTimerId =setInterval(function(){
              doodBottomSpace -= 5
              Dood.style.bottom = doodBottomSpace +'px'
+             if(doodBottomSpace <= 0){
+                 GameOver()
+                 GameOver = true
+                 clearInterval(upTimerId)
+                 clearInterval(downTimerId)
 
-         })
+             }
+
+         },30)
+
+     }
+     function GameOver(){
+         console.log('Game Over')
 
      }
     
     function Start(){
         if(!GameOver)
-            {createDood()
-                createPlatform()
+            {createPlatform()
+                createDood()
                setInterval (movePlatforms,30)
                jump()
         }
