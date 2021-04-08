@@ -3,6 +3,8 @@
     height: 600px;
     background-color: blue;
     position: relative;
+    font-size: 200;
+    text-align: center;
 }
 .dood{
     width: 50;
