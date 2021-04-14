@@ -1,11 +1,13 @@
-document.addEventListener('DOMContentLoaded',()=>{
+document.addEventListener('DOMContentLoaded', ()=>{
     const grid = document.querySelector('.grid')
-    const Dood= document.createElement('div')
+    const Dood = document.createElement('div')
+    let isGameOver = false
+    let platFormMaker = 5
+    let platforms = []
+    let score = 0
     let doodLeftSpace = 50
     let startpoint = 150
     let doodBottomSpace = startpoint
-    let platFormMaker = 5
-    let platforms = []
     let upTimerId
     let downTimerId
     let isJumping = true
@@ -13,39 +15,35 @@ document.addEventListener('DOMContentLoaded',()=>{
     let isMovingRight = false
     let leftTimerId
     let rightTimerId
-    let score = 0
-    function createDood(){
-        grid.appendChild(Dood)
-        doodLeftSpace = platform[0].left
-        Dood.classList.add('dood')
-        Dood.style.left = doodLeftSpace +'px'
-        Dood.style.bottom= doodBottomSpace +'px'
-        let GameOver= false
-    }
-    class Platform{
-        constructor(platFormBottom){
+    
+
+ class Platform {
+        constructor(platFormBottom) {
+           this.left = Math.random()* 315
             this.bottom =platFormBottom
-            this.left=Math.random()* 315
             this.visual=document.createElement('div')
+            
             const visual = this.visual
-            visual.classList.add('Platfrom')
+            visual.classList.add('platform')
             visual.style.left = this.left + 'px'
             visual.style.bottom =this.bottom + 'px'
             grid.appendChild(visual)
         }
     }
+    
     function createPlatform(){
         for(let i = 0; i < platFormMaker; i++){
             let platFormSpacer = 600 / platFormMaker
             let platFormBottom = 100 + i * platFormSpacer
             let newPlatform = new Platform(platFormBottom)
             platforms.push(newPlatform)
+            console.log(platforms)
 
 
 
         }
-
-    }
+     }
+    
     function movePlatforms(){
         if(doodBottomSpace > 200){
             platforms.forEach(platform => {
@@ -55,9 +53,9 @@ document.addEventListener('DOMContentLoaded',()=>{
                 if(platform.bottom < 10) {
                     let firstPlatform = platforms [0].visual
                     firstPlatform.classList.remove('platform')
-                    platform.shift()
+                    platforms.shift()
+                    console.log(platforms)
                     score++
-                    console.log(platform)
                     let newPlatform =new Platform(600)
                     platforms.push(newPlatform)
                 }
@@ -65,6 +63,15 @@ document.addEventListener('DOMContentLoaded',()=>{
         }
             
     }
+    
+    function createDood() {
+        grid.appendChild(Dood)
+        Dood.classList.add('Dood')
+        doodLeftSpace = platforms[0].left
+        Dood.style.left = doodLeftSpace + 'px'
+        Dood.style.bottom = doodBottomSpace + 'px'
+      }
+    
     function jump(){
         clearInterval(downTimerId)
         isJumping = true
@@ -81,17 +88,13 @@ document.addEventListener('DOMContentLoaded',()=>{
 
     }
      function fall(){ 
-         clearInterval(upTimerId)
          isJumping =false
+         clearInterval(upTimerId)
          downTimerId =setInterval(function(){
              doodBottomSpace -= 5
              Dood.style.bottom = doodBottomSpace +'px'
              if(doodBottomSpace <= 0){
                  GameOver()
-                 GameOver = true
-                 clearInterval(upTimerId)
-                 clearInterval(downTimerId)
-
              }
 
              platforms.forEach(platform=>{
@@ -105,13 +108,16 @@ document.addEventListener('DOMContentLoaded',()=>{
                      console.log('didnt die')
                      startpoint = doodBottomSpace
                      jump()
+                     console.log('starting', startpoint)
+                     isJumping= true
                  }
              })
 
-         },30)
+         },20)
 
      }
      function control(e){
+         Dood.style.bottom = doodBottomSpace + 'px'
          if (e.key === "ArrowLeft"){
              moveLeft ()
          }
@@ -128,28 +134,28 @@ document.addEventListener('DOMContentLoaded',()=>{
               clearInterval(rightTimerId)
               isMovingRight = false
           }
-          let isMovingLeft = true
+           isMovingLeft = true
           leftTimerId = setInterval(function () {
              if(doodLeftSpace >= 0){
                 doodLeftSpace -=5 
                 Dood.style.left = doodLeftSpace + 'px'
              } else moveRight ()
 
-          },30)
+          },20)
       }
       function moveRight (){
           if(isMovingLeft){
               clearInterval(leftTimerId)
               isMovingLeft = false
           }
-          let isMovingRight = true
+           isMovingRight = true
           rightTimerId = setInterval(function (){
               if(doodLeftSpace <= 350){
                   doodLeftSpace +=5
                   Dood.style.left= doodLeftSpace +'px'
 
               } else moveLeft ()
-          },30)
+          },20)
       }
       function moveStraight (){
           isMovingLeft = false
@@ -160,10 +166,10 @@ document.addEventListener('DOMContentLoaded',()=>{
       }
 
      function GameOver(){
-         console.log('Game Over')
-         GameOver = true
+         isGameOver = true
          while(grid.firstChild){
-             grid.removeChild(grid.firstChild)
+            console.log('Dead')
+            grid.removeChild(grid.firstChild)
          }
          grid.innerHTML= score
          clearInterval(upTimerId)
@@ -174,11 +180,12 @@ document.addEventListener('DOMContentLoaded',()=>{
      }
     
     function Start(){
-        if(!GameOver)
-            {createPlatform()
+        if(!isGameOver)
+            {
+                createPlatform()
                 createDood()
                setInterval (movePlatforms,30)
-               jump()
+               jump(startpoint)
                document.addEventListener('keyup', control)
         }
     }
